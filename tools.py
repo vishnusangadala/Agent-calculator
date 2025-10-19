@@ -6,7 +6,6 @@ from dotenv import dotenv_values
 from langchain_core.tools import tool
 from langchain_openai import ChatOpenAI
 
-
 # --- Utility: extract two numbers from text ---
 _number_re = re.compile(r"[-+]?\d*\.?\d+(?:[eE][-+]?\d+)?")
 
@@ -17,20 +16,12 @@ def _two_nums(text: str) -> List[float]:
         raise ValueError("Please provide at least two numbers, e.g., '3 and 100'.")
     return nums[:2]
 
-
-# --- Basic Tools ---
-@tool
-def echo(text: str) -> str:
-    """Echo back the provided text."""
-    return text
-
-
+# --- Math Tools ---
 @tool
 def add(text: str) -> str:
     """Add two numbers. Accepts free-form input like 'add 3 and 5' or '3, 5'."""
     a, b = _two_nums(text)
     return f"The result of adding {a} and {b} is {a + b}."
-
 
 @tool
 def subtract(text: str) -> str:
@@ -38,13 +29,11 @@ def subtract(text: str) -> str:
     a, b = _two_nums(text)
     return f"The result of subtracting {b} from {a} is {a - b}."
 
-
 @tool
 def multiply(text: str) -> str:
     """Multiply two numbers. Input like '12 * 3' or '12 and 3'."""
     a, b = _two_nums(text)
     return f"The result of multiplying {a} and {b} is {a * b}."
-
 
 @tool
 def divide(text: str) -> str:
@@ -54,13 +43,11 @@ def divide(text: str) -> str:
         return "Error: Division by zero."
     return f"The result of dividing {a} by {b} is {a / b}."
 
-
 @tool
 def power(text: str) -> str:
     """Compute a^b. Input like '2^8', '2 to the power 8', or '2, 8'."""
     a, b = _two_nums(text)
     return f"The result of {a} raised to the power of {b} is {a ** b}."
-
 
 # --- Open-Ended LLM Tool ---
 @tool
@@ -74,6 +61,5 @@ def llm_response(text: str) -> str:
     llm = ChatOpenAI(model="gpt-4o", temperature=0.8, api_key=api_key)
     return llm.invoke(text).content
 
-
-# --- Export all tools ---
-TOOLS = [echo, add, subtract, multiply, divide, power, llm_response]
+# --- Export tools ---
+TOOLS = [add, subtract, multiply, divide, power, llm_response]
